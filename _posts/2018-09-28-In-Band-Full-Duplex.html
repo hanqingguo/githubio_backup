@@ -1,0 +1,42 @@
+---
+layout: post
+title: Deep Learning Interference Cancellation Based on Software Defined Radio(SDR) and USRPs
+description: This artical illustrate how DSIC works and the signal processing knowledgement in Gnuradio
+image: /assets/media/IBFD/gnuradio.png
+categories: [Radio]
+tags: [Gnuradio, Machine-Learning, Radio, Modulation]
+
+---
+<img src="{{page.image}}" width="85%"/>
+<br/>
+<br/>
+<a href="https://www.gnuradio.org/">Gnuradio</a> is a Software Defined Radio(SDR) platform. USRPs are devices to transmit and receive radios.
+This paper shows steps to cancel Self-Interference by Deep-Learning.
+<p>Detailed paper can be found in arXiv <a href="https://arxiv.org/abs/1811.01498">
+DSIC: Deep Learning based Self-Interference Cancellation for In-Band Full Duplex Wireless</a>
+arXiv preprint arXiv 1811.01498.2018, submitted to IEEE ICC 2019</p>
+<h2>Simulation Principle</h2>
+<img src="/assets/media/IBFD/FIR.png" width="50%" height="50%">
+<p>
+The novel idea of cancelling SI is extract known SI signal from received signals.
+To prove the possibility of SI cancellation, a simulation was designated.
+</p>
+<img src="/assets/media/IBFD/steps.png" width="70%">
+<h2>Step1: Sensing</h2>
+<p>This step sending known signal to probe SI channel. The designated probing signals will pass the SI channel and transform to unknown received SI signals denoted by
+<code>y<sub>si</sub></code></p>
+
+<h2>Step2: Collect Synchronized Data</h2>
+<p>Following the SI channel probing, the framework collects and records I and Q components of both the probing complex signals <code>x</code> and the received SI signal <code>y<sub>si</sub></code>.
+Since USRPs always start with random time delay, we use barker code embedded to each frame to Synchronize, thus making sure <code>x</code> and <code>y<sub>si</sub></code> is one to one mapping
+</p>
+
+<h2>Step3: Train SI channel</h2>
+<img src="/assets/media/IBFD/net.png" width="50%" height="50%">
+  <p>With the data of <code>x</code> and <code>y<sub>si</sub></code> collected, they are then used to train a DNN SI channel
+model in a supervised learning way. The structure of the DNN
+SI channel model is explained in my recent publication</p>
+
+<h2>Step4: Load SI channel</h2>
+  <p>We write a load module in Gnuradio as an OOT block, in this module, it load DNN parameters by using <code>model.load_state_dict(torch.load(PATH))</code>, then process any input stream through the DNN to estimate <code>y<sub>si</sub>[n]</code></p>
+  <img src="/assets/media/IBFD/Recover.png" width="50%" height="50%">
