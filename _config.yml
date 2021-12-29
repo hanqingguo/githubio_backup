@@ -14,7 +14,7 @@ paginate_path: "/blog/page/:num"
 categories_path : categories.html
 tags_path : tags.html
 
-BASE_PATH : https://hanqingguo.github.io
+BASE_PATH : https://hanqingguo.github.io/githubio_backup/
 
 
 title : Hanqing Guo
